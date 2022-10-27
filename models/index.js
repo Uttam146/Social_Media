@@ -1,22 +1,25 @@
-const {Sequelize,DataTypes} = require('sequelize');
-const dbConfig = require('../db/dbConfig');
+const { Sequelize, DataTypes } = require('sequelize');
+const dbConfig = require('../config/dbConfig');
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER,
     dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
     operationsAliases: false,
     pool: {
-        max: dbConfig.pool.max,
-        min: dbConfig.pool.min,
+        max: dbConfig.max,
+        min: dbConfig.min,
         acquire: dbConfig.pool.acquire,
-        idle: dbConfig.pool.idle
+        idle: dbConfig.idle
     }
 });
-sequelize.authenticate().then(()=>console.log("DB connected!")).catch((err)=>console.log(err));
-const db={
-    Sequelize,
-    sequelize
-};
+
+sequelize.authenticate().then(()=>{console.log('DB is connected')}).catch((err)=>{
+    console.log(err);
+});
+const db = {
+    sequelize,
+    Sequelize
+}
 db.users=require('./User')(sequelize,DataTypes);
 db.sequelize.sync().then(()=>console.log("Sync successful!"));
-module.exports=db;
+module.exports = db;
